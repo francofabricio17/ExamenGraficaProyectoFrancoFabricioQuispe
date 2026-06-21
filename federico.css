@@ -1,0 +1,187 @@
+body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    font-family: 'Montserrat', sans-serif;
+    background-color: #050d0a; /* Fondo oscuro base */
+}
+
+/* --- TÍTULO SEPARADO (ESQUINA SUPERIOR IZQUIERDA) --- */
+.main-titulo-izquierdo {
+    position: absolute;
+    top: 50px;
+    left: 50px;
+    z-index: 10;
+    pointer-events: none; /* Deja pasar los clicks del mouse hacia el modelo 3D */
+    max-width: 600px;
+}
+
+.texto-region {
+    font-family: 'Cinzel', serif;
+    font-size: 1.3rem;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.5);
+    margin: 0 0 8px 0;
+}
+
+.texto-monumento {
+    font-family: 'Cinzel', serif;
+    font-size: 3.2rem;
+    letter-spacing: 3px;
+    color: #ffffff;
+    margin: 0;
+    text-transform: uppercase;
+    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
+    line-height: 1.1;
+}
+
+.texto-monumento span {
+    font-family: 'Cinzel Decorative', serif;
+    color: #d46b7a; /* Color característico de la interfaz */
+    display: block;
+    font-size: 3.5rem;
+    letter-spacing: 2px;
+    margin-top: 8px;
+    text-shadow: 0 0 25px rgba(212, 107, 122, 0.5), 0 4px 15px rgba(0,0,0,0.9);
+}
+
+/* --- PANEL DE INFO LATERAL (DERECHA) --- */
+#info-sidebar {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 470px;
+    height: 100%;
+    /* Degradado liso desde el centro hacia la derecha */
+    background: linear-gradient(90deg, rgba(5, 13, 10, 0) 0%, rgba(5, 13, 10, 0.85) 30%, #050d0a 100%);
+    box-sizing: border-box;
+    padding: 60px 40px;
+    display: flex;
+    flex-direction: column;
+    z-index: 10;
+    color: #ffffff;
+    pointer-events: auto;
+}
+
+.sidebar-scrollable {
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 15px;
+    margin-bottom: 25px;
+    margin-top: 20px; /* Margen para que se alinee estéticamente con el título */
+}
+
+/* Barra de scroll */
+.sidebar-scrollable::-webkit-scrollbar {
+    width: 4px;
+}
+.sidebar-scrollable::-webkit-scrollbar-thumb {
+    background: rgba(212, 107, 122, 0.3);
+    border-radius: 2px;
+}
+
+.info-bloque {
+    margin-bottom: 35px;
+}
+
+.info-bloque h2 {
+    font-family: 'Cinzel', serif;
+    font-size: 1.2rem;
+    color: #ffffff;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 6px;
+    margin-bottom: 12px;
+    letter-spacing: 1px;
+}
+
+.info-bloque p {
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.8);
+    margin: 0;
+}
+
+.fichatecnica p {
+    margin-bottom: 8px;
+}
+.fichatecnica strong {
+    color: #4a7fa0;
+}
+
+/* BOTÓN VOLVER */
+.action-button-back {
+    background: linear-gradient(135deg, #d46b7a 0%, #4a7fa0 100%);
+    color: #ffffff;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 2px;
+    padding: 15px;
+    border-radius: 25px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(212, 107, 122, 0.2);
+}
+.action-button-back:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(74, 127, 160, 0.4);
+}
+
+/* --- PANTALLA DE CARGA --- */
+#loader-container {
+    position: fixed;
+    top: 0; 
+    left: 0; 
+    width: 100%; 
+    height: 100%;
+    background-color: #050d0a;
+    z-index: 9999;
+    display: flex; 
+    justify-content: center; 
+    align-items: center;
+    transition: opacity 0.5s ease, visibility 0.5s ease;
+}
+#loader-container.loaded { 
+    opacity: 0; 
+    visibility: hidden; 
+}
+.loader-content { 
+    text-align: center; 
+    width: 90%; 
+    max-width: 400px; 
+}
+.loader-brand { 
+    font-family: 'Cinzel', serif; 
+    color: #d46b7a; 
+    font-size: 0.9rem; 
+    letter-spacing: 4px; 
+    margin-bottom: 15px; 
+}
+.loader-text { 
+    font-family: 'Cinzel Decorative', serif; 
+    color: #ffffff; 
+    font-size: 1.6rem; 
+    margin-bottom: 20px; 
+}
+.progress-bar-container { 
+    width: 100%; 
+    height: 4px; 
+    background-color: rgba(255, 255, 255, 0.1); 
+    overflow: hidden; 
+    margin-bottom: 10px; 
+}
+#progress-bar { 
+    width: 0%; 
+    height: 100%; 
+    background: linear-gradient(90deg, #d46b7a, #4a7fa0); 
+    transition: width 0.2s ease; 
+}
+#progress-text { 
+    font-family: 'Montserrat', sans-serif; 
+    color: rgba(255, 255, 255, 0.5); 
+    font-size: 0.8rem; 
+}

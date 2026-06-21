@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plaza del Minero de Siglo "XX" - Entorno Virtual</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        /* RESET GENERAL */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: #0a0c10;
+            color: #ffffff;
+            overflow-x: hidden;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* FONDO GENERAL REUTILIZABLE CON TRANSICIÓN OPTIMIZADA */
+        .bg-model-container {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 60%; 
+            height: 100vh;
+            z-index: -2;
+            background-image: url('imagenes/plaza.jpg'); 
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center right;
+            transition: background-image 1.2s ease-in-out; 
+        }
+
+        .gradient-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: linear-gradient(90deg, #0a0c10 0%, #0a0c10 40%, rgba(10, 12, 16, 0.85) 55%, rgba(10, 12, 16, 0.1) 100%);
+            z-index: -1;
+        }
+
+        /* NAVEGACIÓN SUPERIOR MODIFICADA */
+        .header-navigation {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 25px 60px;
+            z-index: 10;
+            background: rgba(10, 12, 16, 0.85);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        .brand-logo {
+            font-weight: 900;
+            font-size: 1.5rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+
+        .brand-logo span { color: #d46b7a; font-weight: 500; }
+
+        .menu-links { display: flex; list-style: none; gap: 20px; }
+
+        .menu-links a {
+            color: rgba(255, 255, 255, 0.65);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 12px 22px;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+        }
+
+        .menu-links li.active a, .menu-links a:hover {
+            color: #ffffff;
+            background: rgba(74, 127, 160, 0.25);
+        }
+
+        /* CONTENEDOR DE PÁGINA */
+        .page-section {
+            display: flex;
+            flex-direction: column;
+            padding: 40px 60px;
+            z-index: 2;
+            width: 100%;
+        }
+
+        .meta-tag {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            color: #4a7fa0; 
+            font-weight: 800;
+            margin-bottom: 12px;
+        }
+
+        h1 {
+            font-size: 3rem;
+            font-weight: 900;
+            line-height: 1.1;
+            text-transform: uppercase;
+            letter-spacing: -1.5px;
+            margin-bottom: 20px;
+        }
+
+        /* BOTÓN INFERIOR OPTIMIZADO ENLACE */
+        .action-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #d46b7a 0%, #4a7fa0 100%); 
+            color: #ffffff;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.95rem;
+            letter-spacing: 2px;
+            padding: 18px 45px;
+            border-radius: 35px; 
+            box-shadow: 0 10px 30px rgba(212, 107, 122, 0.3);
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            width: fit-content;
+            text-align: center;
+        }
+        .action-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 18px 40px rgba(74, 127, 160, 0.5);
+        }
+
+        /* DISEÑO DE CONTENIDO */
+        .layout-inicio { max-width: 580px; }
+        .author-name {
+            font-size: 1rem; color: #8a909c; margin-bottom: 25px;
+            font-weight: 500; text-transform: uppercase; letter-spacing: 1px;
+        }
+        .essay-box {
+            background: rgba(20, 24, 33, 0.7);
+            border-left: 4px solid #d46b7a;
+            padding: 30px;
+            border-radius: 0 16px 16px 0;
+            backdrop-filter: blur(12px);
+            margin-bottom: 30px;
+        }
+        .essay-box p { font-size: 1.05rem; line-height: 1.65; color: #e2e4e9; margin-bottom: 15px; text-align: justify; }
+        .essay-box p:last-child { margin-bottom: 0; }
+
+        /* BARRA INFERIOR DE DATOS TÉCNICOS */
+        .data-footer {
+            width: 100%;
+            background: #0f1115;
+            border-top: 1px solid rgba(255, 255, 255, 0.04);
+            padding: 25px 60px;
+            z-index: 10;
+            margin-top: auto;
+        }
+        .data-row {
+            max-width: 100%;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 35px;
+        }
+        .data-block { border-left: 2px solid rgba(74, 127, 160, 0.4); padding-left: 20px; }
+        .label-technical { font-size: 0.75rem; text-transform: uppercase; color: #d46b7a; letter-spacing: 2px; font-weight: 700; margin-bottom: 6px; }
+        .value-technical { font-size: 0.88rem; color: #b0b5c1; line-height: 1.5; }
+
+        @media (max-width: 992px) {
+            .bg-model-container { opacity: 0.1; }
+            .page-section { padding: 30px 20px; }
+            .header-navigation { padding: 20px; flex-direction: column; gap: 15px; }
+            .menu-links { flex-wrap: wrap; justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-model-container" id="globalBg"></div>
+    <div class="gradient-overlay"></div>
+
+    <header class="header-navigation">
+        <div class="brand-logo">SIGLO XX <span>3D</span></div>
+        <ul class="menu-links">
+            <li class="active"><a href="#inicio">Inicio 🏠</a></li>
+            <li><a href="fotografias.html">Fotografias 🖼️</a></li>
+            <li><a href="estatuas.html">Monumentos 🗿</a></li>
+            <li><a href="modelo.html">Modelo 3D 🎮</a></li>
+        </ul>
+    </header>
+
+    <main id="inicio" class="page-section">
+        <div class="layout-inicio">
+            <span class="meta-tag">Proyecto Virtual</span>
+            <h1>Puesta en Valor de la Histórica Plaza del Minero</h1>
+            <div class="author-name">Desarrollado Por: Franco Fabricio Quispe</div>
+            
+            <div class="essay-box">
+                <p>Bienvenido al entorno virtual dedicado exclusivamente a la Plaza del Minero de Siglo XX (Llallagua, Potosí). Este espacio web y su recorrido interactivo nacen como un proyecto académico de rescate y preservación digital de la memoria histórica, política y sindical del proletariado boliviano, enfocándose en el suelo donde se concentraron las mayores movilizaciones obreras del país.</p>
+                <p>Estar en la histórica Plaza del Minero implica situarse en un contexto que reúne todas las peculiaridades de un verdadero patrimonio histórico que debe conservarse para la posteridad. Un monumento vivo de las luchas sociales que tuvieron lugar en este espacio abierto, donde se consolidó la larga tradición del sindicalismo revolucionario.</p>
+            </div>
+            
+            <a href="modelo.html" class="action-button">Ingresar al Entorno 3D</a>
+        </div>
+    </main>
+
+    <footer class="data-footer">
+        <div class="data-row">
+            <div class="data-block">
+                <div class="label-technical">Denominación Oficial</div>
+                <div class="value-technical">"Monumento Histórico de Grandes Revolucionarios" (Ley Mpal. 131/2017).</div>
+            </div>
+            <div class="data-block">
+                <div class="label-technical">Ubicación Geográfica</div>
+                <div class="value-technical">Distrito de Siglo XX, Municipio de Llallagua, Potosí, Bolivia.</div>
+            </div>
+            <div class="data-block">
+                <div class="label-technical">Estatus Patrimonial</div>
+                <div class="value-technical">Epicentro del Sindicalismo Revolucionario Boliviano.</div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 1. Array de imágenes de fondo
+        const imagenesFondo = [
+            'imagenes/plaza1.png',
+            'imagenes/minero1.jpg', 
+            'imagenes/plaza3.jpg'
+        ];
+
+        let indiceActual = 0;
+        const contenedorBg = document.getElementById('globalBg');
+
+        function cambiarImagenFondo() {
+            indiceActual = (indiceActual + 1) % imagenesFondo.length;
+            contenedorBg.style.backgroundImage = `url('${imagenesFondo[indiceActual]}')`;
+        }
+
+        // 2. Cambia cada 5 segundos
+        setInterval(cambiarImagenFondo, 5000);
+    </script>
+</body>
+</html>

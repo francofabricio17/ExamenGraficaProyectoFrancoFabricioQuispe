@@ -1,0 +1,202 @@
+body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    font-family: 'Montserrat', sans-serif;
+    background-color: #050d0a;
+}
+
+#ui-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    pointer-events: none;
+    z-index: 100;
+}
+
+.titulo-plaza {
+    position: absolute;
+    top: 40px;
+    left: 40px; /* Alineado a la izquierda */
+    color: #ffffff;
+    font-family: 'Cinzel', serif;
+    font-size: 1.4rem; /* Tamaño más sutil para la jerarquía superior */
+    font-weight: 700;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    text-align: left; /* Alineación del texto a la izquierda */
+    user-select: none;
+    text-shadow: 0 4px 10px rgba(0, 0, 0, 0.9);
+    margin: 0;
+}
+
+.titulo-plaza span {
+    font-family: 'Cinzel Decorative', serif; 
+    color: #d46b7a;
+    font-size: 2.8rem;
+    display: block;
+    margin-top: 10px;
+    letter-spacing: 6px;
+    text-shadow: 0 0 20px rgba(212, 107, 122, 0.4), 
+                 0 4px 12px rgba(0, 0, 0, 0.9);
+}
+
+.action-button {
+    position: absolute;
+    bottom: 30px;
+    right: 30px;
+    display: inline-block;
+    background: linear-gradient(135deg, #d46b7a 0%, #4a7fa0 100%); 
+    color: #ffffff;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.95rem;
+    letter-spacing: 2px;
+    padding: 18px 45px;
+    border-radius: 35px; 
+    box-shadow: 0 10px 30px rgba(212, 107, 122, 0.3);
+    border: none;
+    cursor: pointer;
+    pointer-events: auto;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    width: fit-content;
+    text-align: center;
+}
+
+.action-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 35px rgba(74, 127, 160, 0.5);
+    filter: brightness(1.1);
+}
+
+.action-button:active {
+    transform: translateY(-1px);
+    box-shadow: 0 5px 15px rgba(212, 107, 122, 0.4);
+}
+
+/* --- PANTALLA DE CARGA --- */
+#loader-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #050d0a; /* Fondo idéntico a tu escena 3D */
+    z-index: 9999; /* Asegura cobertura total inicial */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 0.5s ease, visibility 0.5s ease;
+    pointer-events: auto;
+}
+
+#loader-container.loaded {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.loader-content {
+    text-align: center;
+    width: 90%;
+    max-width: 450px;
+}
+
+.loader-brand {
+    font-family: 'Cinzel', serif;
+    color: #ffffff;
+    font-size: 1.1rem;
+    letter-spacing: 4px;
+    margin-bottom: 12px;
+}
+
+.loader-text {
+    font-family: 'Cinzel Decorative', serif;
+    color: #d46b7a;
+    font-size: 2.2rem;
+    letter-spacing: 3px;
+    margin-bottom: 25px;
+}
+
+.progress-bar-container {
+    width: 100%;
+    height: 3px;
+    background-color: rgba(255, 255, 255, 0.08);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-bottom: 12px;
+}
+
+#progress-bar {
+    width: 0%;
+    height: 100%;
+    background: linear-gradient(90deg, #d46b7a, #4a7fa0);
+    transition: width 0.15s ease;
+}
+
+#progress-text {
+    font-family: 'Montserrat', sans-serif;
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+}
+
+/* --- PANEL DE INSTRUCCIONES (ESQUINA DERECHA, ARRIBA DEL BOTÓN VOLVER) --- */
+.instrucciones-navegacion {
+    position: absolute;
+    bottom: 110px; /* Separado del botón volver */
+    right: 30px;
+    z-index: 10;
+    background: rgba(10, 14, 12, 0.75);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(212, 107, 122, 0.2);
+    border-radius: 16px;
+    padding: 20px 25px;
+    color: #ffffff;
+    width: 290px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    pointer-events: auto; /* Permite hacer clic/interactuar si fuera necesario */
+}
+
+.instrucciones-navegacion h3 {
+    font-family: 'Cinzel', serif;
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #d46b7a;
+    margin-top: 0;
+    margin-bottom: 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    padding-bottom: 8px;
+}
+
+.instrucciones-navegacion ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.instrucciones-navegacion li {
+    font-size: 0.8rem;
+    line-height: 1.8;
+    color: rgba(255, 255, 255, 0.85);
+    font-family: 'Montserrat', sans-serif;
+}
+
+.instrucciones-navegacion strong {
+    color: #4a7fa0;
+    display: inline-block;
+    width: 65px;
+}
+
+/* Ajuste responsivo: Oculta el panel en pantallas muy estrechas */
+@media (max-width: 768px) {
+    .instrucciones-navegacion {
+        display: none; 
+    }
+}
