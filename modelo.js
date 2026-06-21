@@ -52,7 +52,7 @@ function init()
     var progressBar = document.getElementById('progress-bar');
     var progressText = document.getElementById('progress-text');
     var cargar = new THREE.GLTFLoader();
-    cargar.load("assets/Plaza1.glb", 
+    cargar.load("assets/Plazacopia2.glb", 
         function(gltf)
         {
             plaza = gltf.scene;
