@@ -8,6 +8,12 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@700;900&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">    
     <link rel="stylesheet" href="estatuas.css">
+    <style>
+        /* Ajuste añadido para forzar la 'manita' en todas las tarjetas de estatuas */
+        .estatua-card {
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
     <div id="monumentos-container">  
@@ -55,24 +61,24 @@
                 </div>
             </div>
 
-            <div class="estatua-card">
-    <div class="card-imagen-wrapper">
-        <img src="imagenes/federico.jpg" alt="Monumento a Federico Escobar" class="card-img">
-        <span class="badge-3d">Interactivo</span>
-    </div>
-    <div class="card-info">
-        <h2 class="estatua-nombre">Federico Escobar Zapata</h2>
-        <p class="estatua-historia"><strong>Historia:</strong> Histórico líder sindical minero de Bolivia, trabajador del Campamento Siglo XX en la mina Catavi, quien dedicó su vida a la defensa de los derechos laborales.</p>
-        <p class="estatua-significado"><strong>Significado:</strong> Ocupó el cargo de Control Obrero y fundó el Partido Comunista Marxista Leninista. Su efigie rinde homenaje a la lucha inquebrantable y la resistencia del proletariado minero.</p>
-        <button class="btn-ver-3d" onclick="window.location.href='federico.html'">Ver Estatua en 3D</button>
-        <div class="info-adicional-card">
-            <span><strong>Material:</strong> Bronce / Metal esculpido</span>
-            <span><strong>Año:</strong> 1966 (Deceso)</span>
-        </div>
-    </div>
-</div>
+            <div class="estatua-card destacado" onclick="window.location.href='federico.html'">
+                <div class="card-imagen-wrapper">
+                    <img src="imagenes/federico.jpg" alt="Monumento a Federico Escobar" class="card-img">
+                    <span class="badge-3d">Interactivo</span>
+                </div>
+                <div class="card-info">
+                    <h2 class="estatua-nombre">Federico Escobar Zapata</h2>
+                    <p class="estatua-historia"><strong>Historia:</strong> Histórico líder sindical minero de Bolivia, trabajador del Campamento Siglo XX en la mina Catavi, quien dedicó su vida a la defensa de los derechos laborales.</p>
+                    <p class="estatua-significado"><strong>Significado:</strong> Ocupó el cargo de Control Obrero y fundó el Partido Comunista Marxista Leninista. Su efigie rinde homenaje a la lucha inquebrantable y la resistencia del proletariado minero.</p>
+                    <button class="btn-ver-3d" onclick="event.stopPropagation(); window.location.href='federico.html'">Ver Estatua en 3D</button>
+                    <div class="info-adicional-card">
+                        <span><strong>Material:</strong> Bronce / Metal esculpido</span>
+                        <span><strong>Año:</strong> 1966 (Deceso)</span>
+                    </div>
+                </div>
+            </div>
 
-           <div class="estatua-card" onclick="window.location.href='irineo.html'">
+            <div class="estatua-card destacado" onclick="window.location.href='irineo.html'">
                 <div class="card-imagen-wrapper">
                     <img src="imagenes/irineo.jpg" alt="Monumento a Irineo Pimentel Rojas" class="card-img">
                     <span class="badge-3d">Interactivo</span>
@@ -89,22 +95,22 @@
                 </div>
             </div>
 
-
-            <div class="estatua-card">
-                <div class="card-imagen-wrapper">
-                    <img src="imagenes/cesar.jpg" alt="Nombre Estatua 5" class="card-img">
-                </div>
-                <div class="card-info">
-                    <h2 class="estatua-nombre">Nombre Estatua 5</h2>
-                    <p class="estatua-historia"><strong>Historia:</strong> Crónica o datos recopilados sobre la inauguración de este quinto monumento.</p>
-                    <p class="estatua-significado"><strong>Significado:</strong> Mensaje o legado que deja a las futuras generaciones de la región minera.</p>
-                    <button class="btn-ver-3d">Ver Estatua en 3D</button>
-                    <div class="info-adicional-card">
-                        <span><strong>Material:</strong> Metal / Fundición</span>
-                        <span><strong>Año:</strong> - </span>
-                    </div>
-                </div>
-            </div>
+            <div class="estatua-card destacado" onclick="window.location.href='cesar.html'">
+    <div class="card-imagen-wrapper">
+        <img src="imagenes/cesar.jpg" alt="Monumento a César Lora, Guillermo Lora e Isaac Camacho" class="card-img">
+        <span class="badge-3d">Interactivo</span>
+    </div>
+    <div class="card-info">
+        <h2 class="estatua-nombre">César Lora, Guillermo Lora e Isaac Camacho</h2>
+        <p class="estatua-historia"><strong>Historia:</strong> Erigido en homenaje a tres figuras fundamentales del movimiento obrero minero de Llallagua y Siglo XX: César Lora, Guillermo Lora e Isaac Camacho.</p>
+        <p class="estatua-significado"><strong>Significado:</strong> El pedestal unificado simboliza la unidad ideológica, la resistencia obrera y la lucha inclaudicable contra las dictaduras y la explotación minera.</p>
+        <button class="btn-ver-3d" onclick="event.stopPropagation(); window.location.href='cesar.html'">Ver Estatua en 3D</button>
+        <div class="info-adicional-card">
+            <span><strong>Material:</strong> Metal esculpido / Bronce</span>
+            <span><strong>Año:</strong> - </span>
+        </div>
+    </div>
+</div>
         </main>
         <button class="action-button back-btn" onclick="window.location.href='index.html'">Volver a Inicio</button>
     </div>

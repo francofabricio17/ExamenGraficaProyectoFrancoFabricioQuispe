@@ -5,242 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Galería Histórica - Plaza del Minero</title>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Orbitron:wght@700;900&family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
-    
-    <style>
-        /* RESET Y CONFIGURACIÓN BASE */
-        *, *::before, *::after {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-        body {
-            background-color: #0a0c10;
-            color: #ffffff;
-            font-family: 'Montserrat', sans-serif;
-            min-height: 100vh;
-            overflow: hidden;
-            display: flex;
-        }
-
-        /* FONDO EVOCATIVO CON DEGRADADO */
-        .fondo-galeria {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100vh;
-            background: radial-gradient(circle at 50% 50%, rgba(20, 35, 45, 0.6) 0%, #0a0c10 80%),
-                        url('imagenes/plaza.jpg') no-repeat center center;
-            background-size: cover;
-            filter: brightness(2.5) contrast(1.2);
-            z-index: -2;
-        }
-
-        .luces-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100vh;
-            background-image: radial-gradient(circle at 20% 80%, rgba(74, 127, 160, 0.15) 0%, transparent 40%),
-                              radial-gradient(circle at 80% 90%, rgba(212, 107, 122, 0.1) 0%, transparent 30%);
-            z-index: -1;
-            pointer-events: none;
-        }
-
-        /* MENÚ LATERAL IZQUIERDO */
-        .sidebar-menu {
-            position: absolute;
-            left: 40px;
-            top: 50%;
-            transform: translateY(-50%);
-            z-index: 10;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            pointer-events: auto;
-        }
-
-        .sidebar-menu a {
-            display: inline-block;
-            background: rgba(15, 17, 21, 0.6);
-            color: rgba(255, 255, 255, 0.7);
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 700;
-            text-transform: uppercase;
-            font-size: 0.85rem;
-            letter-spacing: 2px;
-            padding: 15px 35px;
-            border-radius: 35px; 
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            width: 200px;
-            text-align: center;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-        }
-
-        .sidebar-menu a:hover, .sidebar-menu a.active {
-            background: linear-gradient(135deg, #d46b7a 0%, #4a7fa0 100%); 
-            color: #ffffff;
-            border-color: transparent;
-            transform: translateY(-3px);
-            box-shadow: 0 10px 25px rgba(212, 107, 122, 0.4);
-            filter: brightness(1.1);
-        }
-
-        /* TÍTULO SUPERIOR ANIMADO */
-        .header-title {
-            position: absolute;
-            top: 40px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-family: 'Cinzel Decorative', serif;
-            font-size: 3.5rem;
-            font-weight: 900;
-            letter-spacing: 12px;
-            text-transform: uppercase;
-            background: linear-gradient(135deg, #ffffff 10%, #d46b7a 50%, #4a7fa0 90%);
-            background-size: 200% auto;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 0 15px 30px rgba(0,0,0,0.7);
-            z-index: 5;
-            animation: brilloTexto 4s linear infinite;
-        }
-
-        @keyframes brilloTexto {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        /* CONTENEDOR PRINCIPAL DEL ESCENARIO 3D */
-        .escenario-3d {
-            flex: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            perspective: 1400px;
-            height: 100vh;
-            margin-left: 110px;
-        }
-
-        /* ESTRUCTURA DEL CARRUSEL GIRATORIO */
-        .carrusel-3d {
-            position: relative;
-            width: 350px;   /* Tamaño reducido de 420px a 320px */
-            height: 270px;  /* Tamaño reducido de 280px a 220px */
-            transform-style: preserve-3d;
-            transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.3, 1);
-        }
-
-        /* ESTILO ELEGANTE PARA LAS TARJETAS */
-        .tarjeta-foto {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            left: 0;
-            top: 0;
-            background-color: rgba(15, 18, 26, 0.85);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            backdrop-filter: blur(4px); /* Efecto cristal suave */
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.7), 
-                        0 0 15px rgba(74, 127, 160, 0.1);
-            backface-visibility: visible;
-            pointer-events: auto;
-            cursor: pointer;
-            transition: transform 0.5s ease, filter 0.5s ease, border-color 0.4s, box-shadow 0.4s;
-        }
-
-        .tarjeta-foto img {
-            width: 100%;
-            height: 75%; 
-            object-fit: cover;
-            border-bottom: 2px solid rgba(74, 127, 160, 0.7);
-            transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
-        }
-
-        /* Texto inferior de la foto */
-        .info-foto {
-            width: 100%;
-            height: 25%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 4px 12px;
-            background: linear-gradient(to top, #090b0e, rgba(15, 18, 26, 0.95));
-            text-align: center;
-        }
-
-        /* TEXTOS INTERIORES REDIMENSIONADOS */
-        .info-foto p {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 0.75rem; /* Ajustado proporcionalmente al tamaño mini */
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            color: rgba(255, 255, 255, 0.9);
-            text-shadow: 0 0 6px rgba(74, 127, 160, 0.6);
-            transition: all 0.3s ease;
-            line-height: 1.2;
-        }
-
-        /* EFECTOS HOVER PREMIUM */
-        .tarjeta-foto:hover {
-            border-color: rgba(212, 107, 122, 0.6);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8), 
-                        0 0 20px rgba(212, 107, 122, 0.3);
-        }
-
-        .tarjeta-foto:hover .info-foto p {
-            color: #ffffff;
-            text-shadow: 0 0 10px rgba(212, 107, 122, 0.9), 0 0 20px rgba(74, 127, 160, 0.6);
-            letter-spacing: 2px;
-        }
-
-        .tarjeta-foto:hover img {
-            transform: scale(1.05);
-        }
-
-        /* CONTROLES DE NAVEGACIÓN INFERIORES */
-        .controles-galeria {
-            position: absolute;
-            bottom: 50px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 20px;
-            z-index: 10;
-            pointer-events: auto;
-        }
-
-        .btn-control {
-            background: rgba(15, 17, 21, 0.8);
-            border: 1px solid rgba(74, 127, 160, 0.4);
-            color: #ffffff;
-            width: 55px;
-            height: 55px;
-            border-radius: 50%;
-            font-size: 1.3rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-        }
-
-        .btn-control:hover {
-            background: #d46b7a;
-            border-color: #d46b7a;
-            box-shadow: 0 0 20px rgba(212, 107, 122, 0.6);
-            transform: scale(1.1);
-        }
-    </style>
+    <link rel="stylesheet" href="estilos-galeria.css">
 </head>
 <body>
 
@@ -250,11 +15,9 @@
     <nav class="sidebar-menu">
         <a href="index.html">Inicio</a>
         <a href="fotografias.html" class="active">Galería</a>
-        <a href="informacion.html">Información</a>
     </nav>
 
     <h1 class="header-title">Fotografías</h1>
-
     <main class="escenario-3d">
         <div class="carrusel-3d" id="carrusel">
             
@@ -272,14 +35,15 @@
                 <img src="imagenes/plaza.jpg" alt="Vista Nocturna">
                 <div class="info-foto"><p>Mística Vista Nocturna</p></div>
             </div>
+            
             <div class="tarjeta-foto">
                 <img src="imagenes/monumento.jpg" alt="Monumentos">
                 <div class="info-foto"><p>Monumentos Escultóricos</p></div>
             </div>
 
             <div class="tarjeta-foto">
-                <img src="imagenes/eventos.jpg" alt="Eventos">
-                <div class="info-foto"><p>Eventos y Movilización Obrera</p></div>
+                <img src="imagenes/evento.jpg" alt="Eventos">
+                <div class="info-foto"><p>Eventos</p></div>
             </div>
 
             <div class="tarjeta-foto">
@@ -295,45 +59,6 @@
         <button class="btn-control" id="nextBtn">⭢</button>
     </div>
 
-    <script>
-        const carrusel = document.getElementById('carrusel');
-        const tarjetas = document.querySelectorAll('.tarjeta-foto');
-        const prevBtn = document.getElementById('prevBtn');
-        const nextBtn = document.getElementById('nextBtn');
-        
-        const totalTarjetas = tarjetas.length;
-        const anguloPorTarjeta = 360 / totalTarjetas; 
-        
-        // Reducido de 550 a 420 para adaptarse perfectamente a las proporciones más pequeñas
-        const radioZ = 420; 
-        
-        let rotacionActual = 0;
-
-        tarjetas.forEach((tarjeta, indice) => {
-            const anguloCalculado = indice * anguloPorTarjeta;
-            tarjeta.style.transform = `rotateY(${anguloCalculado}deg) translateZ(${radioZ}px)`;
-        });
-
-        function actualizarCarrusel() {
-            carrusel.style.transform = `rotateY(${rotacionActual}deg)`;
-        }
-
-        nextBtn.addEventListener('click', () => {
-            rotacionActual -= anguloPorTarjeta;
-            actualizarCarrusel();
-        });
-
-        prevBtn.addEventListener('click', () => {
-            rotacionActual += anguloPorTarjeta;
-            actualizarCarrusel();
-        });
-
-        tarjetas.forEach((tarjeta, indice) => {
-            tarjeta.addEventListener('click', () => {
-                rotacionActual = -(indice * anguloPorTarjeta);
-                actualizarCarrusel(); // Arreglado el typo anterior aquí
-            });
-        });
-    </script>
+    <script src="script-galeria.js"></script>
 </body>
 </html>
