@@ -67,7 +67,7 @@ function init()
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.3; // Exposición mejorada para resaltar texturas oscuras
+    renderer.toneMappingExposure = 1.4; // Exposición optimizada para texturas rugosas y oscuras
     
     if (renderer.outputColorSpace) {
         renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -89,32 +89,38 @@ function init()
     controles.maxDistance = 150;
     controles.maxPolarAngle = Math.PI / 2; // Bloquea la cámara para que no atraviese el suelo
     
-    // 6. Iluminación Mixta Avanzada (Estilo cinematográfico de mina)
-    var ambientLight = new THREE.AmbientLight(0x3a3530, 0.8); 
+    // =================================================================
+    // 6. ILUMINACIÓN MIXTA AVANZADA REFORZADA (Sin errores de Target)
+    // =================================================================
+    
+    // Luz ambiental base equilibrada para levantar sombras densas
+    var ambientLight = new THREE.AmbientLight(0x4a433c, 1.4); 
     scene.add(ambientLight);
     
-    var hemisphereLight = new THREE.HemisphereLight(0xffffff, 0x1a110a, 0.6);
-    hemisphereLight.position.set(0, 20, 0);
+    // Luz de hemisferio para simular el rebote lumínico del entorno de la cueva
+    var hemisphereLight = new THREE.HemisphereLight(0x3a4b5c, 0x241910, 0.9);
+    hemisphereLight.position.set(0, 30, 0);
     scene.add(hemisphereLight);
     
-    // Luz principal/frontal potente y cálida (Simula reflectores o sol)
-    var directionalLight = new THREE.DirectionalLight(0xffeebb, 2.0); 
-    directionalLight.position.set(10, 25, 20);
+    // Luz principal/frontal potente y cálida (Simula reflectores mineros)
+    var directionalLight = new THREE.DirectionalLight(0xffcc80, 4.5); 
+    directionalLight.position.set(15, 25, 20);
     directionalLight.castShadow = true;
     directionalLight.shadow.mapSize.width = 2048; 
     directionalLight.shadow.mapSize.height = 2048;
+    directionalLight.shadow.bias = -0.001; // Evita artefactos extraños en las mallas
     scene.add(directionalLight);
     
-    // Luz de contra lateral fría (Tono azulado que recorta los bordes metálicos)
-    var directionalLight2 = new THREE.DirectionalLight(0x567085, 1.2); 
-    directionalLight2.position.set(-15, 15, -10);
+    // Luz de contra lateral fría (Tono azulado para recortar y definir los bordes de la silueta)
+    var directionalLight2 = new THREE.DirectionalLight(0x739cb3, 2.5); 
+    directionalLight2.position.set(-20, 15, -15);
     scene.add(directionalLight2);
 
-    // Foco cenital directo
-    var spotLight = new THREE.SpotLight(0xffd180, 2.0);
-    spotLight.position.set(0, 35, 10);
+    // Foco cenital directo (Haz de luz vertical)
+    var spotLight = new THREE.SpotLight(0xffe0b2, 5.0);
+    spotLight.position.set(0, 40, 5);
     spotLight.angle = Math.PI / 4;
-    spotLight.penumbra = 0.5;
+    spotLight.penumbra = 0.7;
     spotLight.castShadow = true;
     scene.add(spotLight);
     
@@ -123,7 +129,7 @@ function init()
     var progressBar = document.getElementById('progress-bar');
     var progressText = document.getElementById('progress-text');
     
-    // 7. Carga del Modelo .GLB del Minero (Se mantiene escala y rugosidad óptima)
+    // 7. Carga del Modelo .GLB del Minero 
     var cargar = new THREE.GLTFLoader();
     cargar.load("assets/Minero.glb", 
         function(gltf)
@@ -151,12 +157,20 @@ function init()
             });
             scene.add(plaza);
             
-            // Centrado automático dinámico en pantalla y aproximación ideal de cámara
+            // --- ASIGNACIÓN DE TARGETS DE LUZ POST-CARGA (Previene errores) ---
             var box = new THREE.Box3().setFromObject(plaza);
             var center = box.getCenter(new THREE.Vector3());
+            var size = box.getSize(new THREE.Vector3());
+            
+            // Vinculamos los objetivos de las luces al modelo ya cargado e instanciado
+            directionalLight.target = plaza;
+            spotLight.target = plaza;
+            
+            // Reubicamos el foco cenital justo encima del centro real de la cabeza de la estatua
+            spotLight.position.set(center.x, center.y + size.y * 1.5, center.z + 1);
             
             controles.target.set(center.x, center.y, center.z);
-            camera.position.set(center.x, center.y + 4, center.z + 10); // Distancia reducida y óptima (+10 en Z)
+            camera.position.set(center.x, center.y + 4, center.z + 10); 
             controles.update();
             
             // Apagar barra de carga de forma fluida

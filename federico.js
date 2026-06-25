@@ -66,7 +66,7 @@ function init()
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.2; // Ajuste equilibrado conservado
+    renderer.toneMappingExposure = 1.4; // Ajuste optimizado para la exposición de detalles ocultos
     
     if (renderer.outputColorSpace) {
         renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -88,32 +88,38 @@ function init()
     controles.maxDistance = 150;
     controles.maxPolarAngle = Math.PI / 2; // Evita que la cámara baje del suelo
     
-    // 6. Configuración de Iluminación Equilibrada Estilo Galería Minera
-    var ambientLight = new THREE.AmbientLight(0x3a3530, 0.8); 
+    // =================================================================
+    // 6. ILUMINACIÓN TEMÁTICA POTENCIADA (Prevención de errores de Target)
+    // =================================================================
+    
+    // Luz ambiental para suavizar zonas oscuras del renderizado
+    var ambientLight = new THREE.AmbientLight(0x4a433c, 1.4); 
     scene.add(ambientLight);
     
-    var hemisphereLight = new THREE.HemisphereLight(0xffffff, 0x1a110a, 0.6);
-    hemisphereLight.position.set(0, 20, 0);
+    // Luz de hemisferio que emula rebotes cromáticos de cueva mineralizada
+    var hemisphereLight = new THREE.HemisphereLight(0x3a4b5c, 0x241910, 0.9);
+    hemisphereLight.position.set(0, 30, 0);
     scene.add(hemisphereLight);
     
-    // Luz frontal/principal potente y cálida
-    var directionalLight = new THREE.DirectionalLight(0xffeebb, 2.0); 
-    directionalLight.position.set(10, 25, 20);
+    // Luz frontal principal dorada de alta intensidad
+    var directionalLight = new THREE.DirectionalLight(0xffcc80, 4.5); 
+    directionalLight.position.set(15, 25, 20);
     directionalLight.castShadow = true;
     directionalLight.shadow.mapSize.width = 2048; 
     directionalLight.shadow.mapSize.height = 2048;
+    directionalLight.shadow.bias = -0.001; // Mitiga artefactos cromáticos en mallas complejas
     scene.add(directionalLight);
     
-    // Luz de contra lateral fría
-    var directionalLight2 = new THREE.DirectionalLight(0x567085, 1.0); 
-    directionalLight2.position.set(-15, 15, -10);
+    // Luz de contra lateral fría para siluetear contornos
+    var directionalLight2 = new THREE.DirectionalLight(0x739cb3, 2.5); 
+    directionalLight2.position.set(-20, 15, -15);
     scene.add(directionalLight2);
 
     // Foco de estudio superior cenital
-    var spotLight = new THREE.SpotLight(0xffd180, 1.5);
-    spotLight.position.set(0, 35, 10);
+    var spotLight = new THREE.SpotLight(0xffe0b2, 5.0);
+    spotLight.position.set(0, 40, 5);
     spotLight.angle = Math.PI / 4;
-    spotLight.penumbra = 0.5;
+    spotLight.penumbra = 0.7;
     spotLight.castShadow = true;
     scene.add(spotLight);
     
@@ -140,6 +146,7 @@ function init()
                     if(obj.material)
                     {
                         obj.material.needsUpdate = true;
+                        obj.material.roughness = 0.4; // Balance óptimo frente a reflexiones
                         if(obj.material.map)
                         {
                             obj.material.map.anisotropy = renderer.capabilities.getMaxAnisotropy();
@@ -149,9 +156,17 @@ function init()
             });
             scene.add(federicoModel);
             
-            // --- CENTRADO Y AJUSTE DE ALTURA MANUAL ---
+            // --- ENLAZADO ASÍNCRONO DE TARGETS (Previene fallos de iluminación) ---
             var box = new THREE.Box3().setFromObject(federicoModel);
             var center = box.getCenter(new THREE.Vector3()); 
+            var size = box.getSize(new THREE.Vector3());
+            
+            // Forzamos a las fuentes focalizadas a seguir la posición del nuevo objeto
+            directionalLight.target = federicoModel;
+            spotLight.target = federicoModel;
+            
+            // Reposicionamos el emisor de foco vertical en proporción a la altura calculada
+            spotLight.position.set(center.x, center.y + size.y * 1.5, center.z + 1);
             
             // Diana ajustada hacia abajo en Y para separar estéticamente de las letras superiores
             var alturaBajar = center.y + 1; 

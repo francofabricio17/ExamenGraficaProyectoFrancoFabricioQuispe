@@ -62,8 +62,8 @@ function init()
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.4; // Ajustado levemente para mayor claridad en sombras
     
-    renderer.toneMappingExposure = 1.2; 
     if (renderer.outputColorSpace) {
         renderer.outputColorSpace = THREE.SRGBColorSpace;
     } else if (renderer.outputEncoding) {
@@ -84,32 +84,33 @@ function init()
     controles.maxDistance = 150;
     controles.maxPolarAngle = Math.PI / 2;
     
-    // 5. Iluminación temática minera
-    var ambientLight = new THREE.AmbientLight(0x3a3530, 1.0); 
+    // 5. Iluminación temática minera potenciada
+    var ambientLight = new THREE.AmbientLight(0x4a433c, 1.5); // Aumentada luz de relleno ambiental
     scene.add(ambientLight);
     
-    var hemisphereLight = new THREE.HemisphereLight(0x2d3742, 0x1a110a, 0.7);
-    hemisphereLight.position.set(0, 20, 0);
+    var hemisphereLight = new THREE.HemisphereLight(0x3a4b5c, 0x241910, 1.0);
+    hemisphereLight.position.set(0, 30, 0);
     scene.add(hemisphereLight);
     
-    // Luz principal cálida
-    var directionalLight = new THREE.DirectionalLight(0xe0b066, 2.5); 
-    directionalLight.position.set(15, 30, 20);
+    // Luz principal cálida (Estilo antorcha/linterna)
+    var directionalLight = new THREE.DirectionalLight(0xffcc80, 4.5); 
+    directionalLight.position.set(20, 25, 25);
     directionalLight.castShadow = true;
     directionalLight.shadow.mapSize.width = 2048; 
     directionalLight.shadow.mapSize.height = 2048;
+    directionalLight.shadow.bias = -0.001; // Evita artefactos extraños de sombras ("shadow acne")
     scene.add(directionalLight);
     
-    // Luz de contra lateral fría
-    var directionalLight2 = new THREE.DirectionalLight(0x567085, 1.2); 
-    directionalLight2.position.set(-20, 15, -15);
+    // Luz de contra lateral fría (Simula destellos metálicos de la roca o veta)
+    var directionalLight2 = new THREE.DirectionalLight(0x739cb3, 2.5); 
+    directionalLight2.position.set(-25, 15, -20);
     scene.add(directionalLight2);
 
-    // Foco cenital superior
-    var spotLight = new THREE.SpotLight(0xffd180, 2.0);
-    spotLight.position.set(0, 40, 10);
-    spotLight.angle = Math.PI / 3;
-    spotLight.penumbra = 0.6;
+    // Foco cenital superior directo
+    var spotLight = new THREE.SpotLight(0xffe0b2, 5.0);
+    spotLight.position.set(0, 40, 5);
+    spotLight.angle = Math.PI / 4;
+    spotLight.penumbra = 0.8; // Suaviza los bordes del cono de luz
     spotLight.castShadow = true;
     scene.add(spotLight);
     
@@ -136,6 +137,12 @@ function init()
                     if(obj.material)
                     {
                         obj.material.needsUpdate = true;
+                        
+                        // CORRECCIÓN DE OPACIDAD: Fuerza al material a reaccionar ante los reflejos de luz
+                        if(obj.material.roughness !== undefined) {
+                            obj.material.roughness = Math.min(obj.material.roughness, 0.55);
+                        }
+                        
                         if(obj.material.map)
                         {
                             obj.material.map.anisotropy = renderer.capabilities.getMaxAnisotropy();
@@ -145,11 +152,20 @@ function init()
             });
             scene.add(plaza);
             
+            // --- DIRECCIONAMIENTO DINÁMICO DE LUCES AL MODELO ---
             var box = new THREE.Box3().setFromObject(plaza);
             var center = box.getCenter(new THREE.Vector3());
+            var size = box.getSize(new THREE.Vector3());
+            
+            // Forzamos a que las luces principales apunten directamente al centro de la estatua
+            directionalLight.target = plaza;
+            spotLight.target = plaza;
+            
+            // Reajustamos la altura del foco según las dimensiones del modelo cargado
+            spotLight.position.set(center.x, center.y + size.y * 1.6, center.z + 1);
             
             controles.target.set(center.x, center.y, center.z);
-            camera.position.set(center.x, center.y + 4, center.z + 12);
+            camera.position.set(center.x, center.y + size.y * 0.4, center.z + size.z * 2.5);
             controles.update();
             
             setTimeout(function() {
