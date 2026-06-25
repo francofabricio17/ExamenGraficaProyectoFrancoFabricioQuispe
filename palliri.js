@@ -8,8 +8,51 @@ function init()
 {
     scene = new THREE.Scene();
     
-    // Configurar el fondo de la pantalla a color negro
-    scene.background = new THREE.Color(0x000000);
+    // 1. FONDO DE AMBIENTE MINERO (Tonalidades carbón, acero y fuego de carbón/mineral)
+    const canvasFondo = document.createElement('canvas');
+    canvasFondo.width = 1;
+    canvasFondo.height = 256;
+    const ctx = canvasFondo.getContext('2d');
+    const degradado = ctx.createLinearGradient(0, 0, 0, 256);
+    
+    degradado.addColorStop(0, '#0d0f12');   // Gris muy oscuro / casi negro (profundidad de la mina)
+    degradado.addColorStop(0.6, '#1e252b');  // Gris acero / azulado en el centro
+    degradado.addColorStop(1, '#4a2f13');    // Tono terracota / óxido / mineral en la base
+    ctx.fillStyle = degradado;
+    ctx.fillRect(0, 0, 1, 256);
+    
+    const texturaCielo = new THREE.CanvasTexture(canvasFondo);
+    if (texturaCielo.colorSpace) {
+        texturaCielo.colorSpace = THREE.SRGBColorSpace;
+    } else if (texturaCielo.encoding) {
+        texturaCielo.encoding = THREE.sRGBEncoding;
+    }
+    scene.background = texturaCielo;
+
+    // 2. PARTÍCULAS TIPO CHISPAS O POLVO MINERAL
+    const verticesChispas = [];
+    for (let i = 0; i < 600; i++) {
+        const x = (Math.random() - 0.5) * 60;
+        const y = (Math.random() - 0.5) * 50 + 10; 
+        const z = (Math.random() - 0.5) * 60 - 20; 
+        verticesChispas.push(x, y, z);
+    }
+    const geomChispas = new THREE.BufferGeometry();
+    
+    // Método compatible con Three.js r108
+    geomChispas.addAttribute('position', new THREE.BufferAttribute(new Float32Array(verticesChispas), 3));
+    
+    // Material de polvo en suspensión o mineral brillante
+    const matChispas = new THREE.PointsMaterial({
+        color: 0xe0a96d,
+        size: 0.15, 
+        sizeAttenuation: true,
+        transparent: true,
+        opacity: 0.6
+    });
+    
+    const puntosChispas = new THREE.Points(geomChispas, matChispas);
+    scene.add(puntosChispas);
 
     camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 2000);
     camera.position.set(0, 5, 10);
@@ -20,9 +63,12 @@ function init()
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     
-    // Ajuste equilibrado: bajamos a 1.2 para que no se vea tan blanca ni tan brillante
     renderer.toneMappingExposure = 1.2; 
-    renderer.outputColorSpace = THREE.SRGBColorSpace; 
+    if (renderer.outputColorSpace) {
+        renderer.outputColorSpace = THREE.SRGBColorSpace;
+    } else if (renderer.outputEncoding) {
+        renderer.outputEncoding = THREE.sRGBEncoding;
+    }
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     document.body.appendChild(renderer.domElement);
@@ -36,34 +82,34 @@ function init()
     controles.enablePan = true;
     controles.minDistance = 2;
     controles.maxDistance = 150;
-    controles.maxPolarAngle = Math.PI / 2; // Evita que la cámara baje del suelo
+    controles.maxPolarAngle = Math.PI / 2;
     
-    // 5. Configuración de Iluminación Equilibrada
-    var ambientLight = new THREE.AmbientLight(0xffffff, 0.8); // Luz pareja suave
+    // 5. Iluminación temática minera
+    var ambientLight = new THREE.AmbientLight(0x3a3530, 1.0); 
     scene.add(ambientLight);
     
-    var hemisphereLight = new THREE.HemisphereLight(0xffffff, 0x333333, 0.6);
+    var hemisphereLight = new THREE.HemisphereLight(0x2d3742, 0x1a110a, 0.7);
     hemisphereLight.position.set(0, 20, 0);
     scene.add(hemisphereLight);
     
-    // Luz frontal/principal moderada (bajamos a 2.0 para evitar el efecto "quemado" o muy blanco)
-    var directionalLight = new THREE.DirectionalLight(0xffffff, 2.0); 
-    directionalLight.position.set(10, 25, 20);
+    // Luz principal cálida
+    var directionalLight = new THREE.DirectionalLight(0xe0b066, 2.5); 
+    directionalLight.position.set(15, 30, 20);
     directionalLight.castShadow = true;
     directionalLight.shadow.mapSize.width = 2048; 
     directionalLight.shadow.mapSize.height = 2048;
     scene.add(directionalLight);
     
-    // Luz de contra lateral 
-    var directionalLight2 = new THREE.DirectionalLight(0xbbddff, 1.0); 
-    directionalLight2.position.set(-15, 15, -10);
+    // Luz de contra lateral fría
+    var directionalLight2 = new THREE.DirectionalLight(0x567085, 1.2); 
+    directionalLight2.position.set(-20, 15, -15);
     scene.add(directionalLight2);
 
-    // Foco de estudio superior
-    var spotLight = new THREE.SpotLight(0xffeebb, 1.5);
-    spotLight.position.set(0, 35, 10);
-    spotLight.angle = Math.PI / 4;
-    spotLight.penumbra = 0.5;
+    // Foco cenital superior
+    var spotLight = new THREE.SpotLight(0xffd180, 2.0);
+    spotLight.position.set(0, 40, 10);
+    spotLight.angle = Math.PI / 3;
+    spotLight.penumbra = 0.6;
     spotLight.castShadow = true;
     scene.add(spotLight);
     
@@ -79,7 +125,7 @@ function init()
         {
             plaza = gltf.scene;
             plaza.position.set(0, 0, 0);
-            plaza.scale.set(4, 4, 4); // Escala
+            plaza.scale.set(4, 4, 4);
             
             plaza.traverse(function(obj)
             {
@@ -90,9 +136,6 @@ function init()
                     if(obj.material)
                     {
                         obj.material.needsUpdate = true;
-                        
-                        // Respetamos completamente las texturas y mapas originales de la estatua
-                        
                         if(obj.material.map)
                         {
                             obj.material.map.anisotropy = renderer.capabilities.getMaxAnisotropy();
@@ -102,17 +145,13 @@ function init()
             });
             scene.add(plaza);
             
-            // --- CENTRADO EN EL EJE CENTRAL DE LA PANTALLA ---
             var box = new THREE.Box3().setFromObject(plaza);
             var center = box.getCenter(new THREE.Vector3());
             
-            // Forzamos a que el pivote de rotación sea exactamente el centro del modelo
             controles.target.set(center.x, center.y, center.z);
-            
             camera.position.set(center.x, center.y + 4, center.z + 12);
             controles.update();
             
-            // Desvanecer la barra de carga
             setTimeout(function() {
                 if (loaderContainer) loaderContainer.classList.add('loaded');
             }, 250);
@@ -135,12 +174,10 @@ function init()
     );
 }
 
-// 7. Ciclo de animación
 function animate()
 {
     requestAnimationFrame(animate);
     
-    // Si el objeto "plaza" ya cargó, le aplicamos una rotación continua en el eje Y
     if(plaza) {
         plaza.rotation.y += 0.01;
     }
@@ -149,15 +186,60 @@ function animate()
     renderer.render(scene, camera);
 }
 
-// Responsividad de ventana
 window.addEventListener("resize", function()
     {
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize(window.innerWidth, window.innerHeight);
+        if(camera) {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+        }
+        if(renderer) {
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
     }
 );
 
-// Ejecución
 init();
 animate();
+
+// --- ESTILOS DE BOTONES ACERO/MINA ---
+const estilosBotones = document.createElement('style');
+estilosBotones.innerHTML = `
+    button, .interfaz-controles button {
+        background: linear-gradient(135deg, #3a444d 0%, #222930 100%); 
+        color: #e0dacf; 
+        border: 2px solid #222930; 
+        border-radius: 8px; 
+        padding: 10px 20px;
+        font-family: 'Montserrat', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        font-weight: bold;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        cursor: pointer;
+        transition: all 0.2s ease-in-out;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.4); 
+        position: relative;
+        overflow: hidden;
+    }
+
+    button:hover {
+        background: linear-gradient(135deg, #505c66 0%, #3a444d 100%);
+        color: #f4eee1;
+        box-shadow: 0 6px 12px rgba(0,0,0,0.6); 
+        transform: translateY(-2px); 
+    }
+
+    button:active {
+        background: linear-gradient(135deg, #191e23 0%, #0f1316 100%);
+        transform: translateY(1px); 
+        box-shadow: 0 2px 4px rgba(0,0,0,0.4);
+    }
+
+    button:disabled {
+        background: #5c636a;
+        color: #b0b5b8;
+        border: 1px solid #494f54;
+        cursor: not-allowed;
+        box-shadow: none;
+    }
+`;
+document.head.appendChild(estilosBotones);

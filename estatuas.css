@@ -1,12 +1,39 @@
+/* --- RESET Y CONFIGURACIÓN BASE --- */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
 body {
     margin: 0;
     padding: 0;
-    background-color: #050d0a; /* Tu color base de Llallagua */
+    background-color: #1a1512; /* Cambiado: Tono café oscuro base rústico minero */
     font-family: 'Montserrat', sans-serif;
-    color: #ffffff;
+    color: #f6efe9; /* Cambiado: Tono crema/beige suave */
     min-height: 100vh;
+    overflow-x: hidden;
 }
 
+/* --- ESTILIZACIÓN DE LA BARRA DE DESPLAZAMIENTO (Scrollbar) --- */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #1a1512; /* Cambiado: Fondo oscuro base */
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(217, 136, 65, 0.4); /* Cambiado: Tono cobre con opacidad */
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(217, 136, 65, 0.7); /* Cambiado: Cobre más visible en hover */
+}
+
+/* --- CONTENEDOR PRINCIPAL --- */
 #monumentos-container {
     max-width: 1200px;
     margin: 0 auto;
@@ -24,19 +51,19 @@ body {
     font-size: 1.2rem;
     letter-spacing: 4px;
     text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.7);
+    color: rgba(246, 239, 233, 0.5); /* Cambiado: Crema suave con opacidad */
     text-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
     margin-bottom: 10px;
 }
 
 .titulo-seccion span {
     font-family: 'Cinzel Decorative', serif; 
-    color: #d46b7a; /* Tu color rosado/naranja característico */
+    color: #d98841; /* Cambiado: Color cobre minero característico */
     font-size: 2.8rem;
     display: block;
     margin-top: 5px;
     letter-spacing: 5px;
-    text-shadow: 0 0 20px rgba(212, 107, 122, 0.3), 0 4px 12px rgba(0, 0, 0, 0.8);
+    text-shadow: 0 0 20px rgba(217, 136, 65, 0.4), 0 4px 12px rgba(0, 0, 0, 0.8); /* Cambiado: Brillo en tono cobre */
 }
 
 .introduccion-texto {
@@ -44,7 +71,7 @@ body {
     margin: 25px auto 0 auto;
     font-size: 1rem;
     line-height: 1.6;
-    color: rgba(255, 255, 255, 0.7);
+    color: rgba(246, 239, 233, 0.75); /* Cambiado: Crema suave con opacidad */
     font-weight: 400;
 }
 
@@ -56,10 +83,10 @@ body {
     align-items: start;
 }
 
-/* Tarjeta Base - Añadido cursor pointer para la manita */
+/* Tarjeta Base */
 .estatua-card {
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    background: rgba(246, 239, 233, 0.03); /* Cambiado: Sutil fondo basado en el color crema */
+    border: 1px solid rgba(246, 239, 233, 0.05); /* Cambiado */
     border-radius: 15px;
     overflow: hidden;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
@@ -69,14 +96,14 @@ body {
 
 .estatua-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 15px 35px rgba(212, 107, 122, 0.15);
-    border-color: rgba(212, 107, 122, 0.4);
+    box-shadow: 0 15px 35px rgba(217, 136, 65, 0.2); /* Cambiado: Sombra con destello cobre */
+    border-color: rgba(217, 136, 65, 0.4); /* Cambiado: Borde cobre al hacer hover */
 }
 
-/* Tarjeta Destacada (Unificado para todas) */
+/* Tarjeta Destacada */
 .estatua-card.destacado {
-    border: 1px solid rgba(212, 107, 122, 0.3);
-    background: linear-gradient(180deg, rgba(212, 107, 122, 0.05) 0%, rgba(5, 13, 10, 0.9) 100%);
+    border: 1px solid rgba(217, 136, 65, 0.3); /* Cambiado: Borde cobre */
+    background: linear-gradient(180deg, rgba(217, 136, 65, 0.05) 0%, rgba(26, 21, 18, 0.9) 100%); /* Cambiado: Gradiente de cobre a fondo oscuro */
 }
 
 /* Contenedor de Imagen */
@@ -104,8 +131,8 @@ body {
     position: absolute;
     bottom: 15px;
     right: 15px;
-    background: #d46b7a;
-    color: #fff;
+    background: #d98841; /* Cambiado: Fondo cobre minero */
+    color: #ffffff;
     padding: 6px 14px;
     font-size: 0.75rem;
     font-weight: 700;
@@ -123,7 +150,7 @@ body {
 .estatua-nombre {
     font-family: 'Cinzel', serif;
     font-size: 1.3rem;
-    color: #d46b7a; /* Color unificado para todas las estatuas */
+    color: #d98841; /* Cambiado: Tono cobre para los nombres */
     margin: 0 0 15px 0;
     letter-spacing: 1px;
 }
@@ -131,12 +158,12 @@ body {
 .estatua-historia, .estatua-significado {
     font-size: 0.9rem;
     line-height: 1.5;
-    color: rgba(255, 255, 255, 0.8);
+    color: rgba(246, 239, 233, 0.75); /* Cambiado: Crema suave con opacidad */
     margin: 0 0 12px 0;
 }
 
 .estatua-historia strong, .estatua-significado strong {
-    color: rgba(255, 255, 255, 0.5);
+    color: #d98841; /* Cambiado: Resaltados `<strong>` ahora usan el color cobre del primer CSS */
     font-weight: 700;
     display: inline-block;
     margin-right: 4px;
@@ -146,11 +173,11 @@ body {
 .info-adicional-card {
     margin-top: 20px;
     padding-top: 15px;
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    border-top: 1px solid rgba(246, 239, 233, 0.08); /* Cambiado */
     display: flex;
     justify-content: space-between;
     font-size: 0.8rem;
-    color: rgba(255, 255, 255, 0.5);
+    color: rgba(246, 239, 233, 0.5); /* Cambiado: Crema suave con opacidad */
 }
 
 /* --- BOTÓN DE RETORNO --- */
@@ -158,7 +185,7 @@ body {
     position: fixed;
     bottom: 30px;
     right: 30px;
-    background: linear-gradient(135deg, #d46b7a 0%, #4a7fa0 100%); 
+    background: linear-gradient(135deg, #d98841 0%, #7c5c4c 100%); /* Cambiado: Gradiente cobre a tierra del botón original */
     color: #ffffff;
     font-family: 'Montserrat', sans-serif;
     font-weight: 700;
@@ -167,8 +194,8 @@ body {
     letter-spacing: 2px;
     padding: 15px 40px;
     border-radius: 35px; 
-    box-shadow: 0 10px 30px rgba(212, 107, 122, 0.3);
-    border: none;
+    box-shadow: 0 10px 30px rgba(217, 136, 65, 0.3); /* Cambiado */
+    border: 1px solid rgba(246, 239, 233, 0.2); /* Cambiado: Borde sutil del primer CSS */
     cursor: pointer;
     transition: all 0.3s ease;
     z-index: 1000;
@@ -176,15 +203,15 @@ body {
 
 .action-button.back-btn:hover {
     transform: translateY(-3px);
-    box-shadow: 0 15px 35px rgba(74, 127, 160, 0.5);
-    filter: brightness(1.1);
+    box-shadow: 0 15px 35px rgba(217, 136, 65, 0.5); /* Cambiado */
+    background: linear-gradient(135deg, #f09e57 0%, #946e5b 100%); /* Cambiado: Hover iluminado del botón original */
 }
 
-/* --- ADICIÓN: ESTILOS PARA EL BOTÓN VER EN 3D --- */
+/* --- ESTILOS PARA EL BOTÓN VER EN 3D --- */
 .btn-ver-3d {
     display: block;
     width: 100%;
-    background: linear-gradient(135deg, #d46b7a 0%, #4a7fa0 100%);
+    background: linear-gradient(135deg, #d98841 0%, #7c5c4c 100%); /* Cambiado: Consistencia con la paleta de botones */
     color: #ffffff;
     font-family: 'Montserrat', sans-serif;
     font-weight: 700;
@@ -194,13 +221,38 @@ body {
     padding: 12px 0;
     margin: 15px 0 5px 0;
     border-radius: 8px;
-    border: none;
+    border: 1px solid rgba(246, 239, 233, 0.1); /* Cambiado */
     cursor: pointer;
-    box-shadow: 0 5px 15px rgba(212, 107, 122, 0.2);
+    box-shadow: 0 5px 15px rgba(217, 136, 65, 0.2); /* Cambiado */
     transition: all 0.3s ease;
 }
 
 .btn-ver-3d:hover, .destacado:hover .btn-ver-3d {
-    filter: brightness(1.15);
-    box-shadow: 0 8px 20px rgba(74, 127, 160, 0.3);
+    background: linear-gradient(135deg, #f09e57 0%, #946e5b 100%); /* Cambiado: Hover interactivo */
+    box-shadow: 0 8px 20px rgba(217, 136, 65, 0.4); /* Cambiado */
+}
+
+/* --- RESPONSIVO PARA PANTALLAS MÓVILES --- */
+@media (max-width: 768px) {
+    .titulo-seccion {
+        font-size: 1rem;
+        letter-spacing: 2px;
+    }
+    .titulo-seccion span {
+        font-size: 2rem;
+        letter-spacing: 3px;
+    }
+    .introduccion-texto {
+        font-size: 0.9rem;
+        padding: 0 15px;
+    }
+    .card-imagen-wrapper {
+        height: 380px;
+    }
+    .action-button.back-btn {
+        padding: 12px 25px;
+        font-size: 0.8rem;
+        bottom: 20px;
+        right: 20px;
+    }
 }

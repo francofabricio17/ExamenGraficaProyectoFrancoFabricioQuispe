@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="fotografias.css">
 </head>
 <body>
+    <div id="webgl-container"></div>
 
     <div class="fondo-galeria"></div>
     <div class="luces-overlay"></div>
@@ -16,12 +17,10 @@
         <a href="index.html">Inicio</a>
         <a href="fotografias.html" class="active">Galería</a>
     </nav>
-
     <h1 class="header-title">Fotografías</h1>
 
     <main class="escenario-3d">
-        <div class="carrusel-3d" id="carrusel">
-            
+        <div class="carrusel-3d" id="carrusel">      
             <div class="tarjeta-foto">
                 <img src="imagenes/frontal.jpg" alt="Vista Frontal">
                 <div class="info-foto"><p>Vista Frontal de la Plaza</p></div>
@@ -51,7 +50,6 @@
                 <img src="imagenes/historia.jpg" alt="Fotografía Antigua">
                 <div class="info-foto"><p>Fotografías de Época</p></div>
             </div>
-
         </div>
     </main>
 
@@ -60,6 +58,7 @@
         <button class="btn-control" id="nextBtn">⭢</button>
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="fotografias.js"></script>
 </body>
 </html>
