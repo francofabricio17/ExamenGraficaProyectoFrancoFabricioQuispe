@@ -4,380 +4,515 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Plaza del Minero de Siglo "XX" - Entorno Virtual</title>
+    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;800;900&family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
     <style>
-        /* RESET GENERAL Y ESTILOS CREPÚSCULO ESTELAR */
-        *, *::before, *::after {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
+        /* === CONFIGURACIÓN BASE E INMERSIVIDAD === */
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
         }
+        
         body {
             font-family: 'Montserrat', sans-serif;
-            background-color: #1a1512;
-            color: #f6efe9;
-            overflow-x: hidden;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
+            background-color: #0b0705;
+            color: #ebdcb9;
+            overflow: hidden;
+            width: 100vw;
+            height: 100vh;
         }
 
-        /* ESCENARIO THREE.JS DE FONDO TOTAL */
+        /* Contenedor del Canvas 3D (Fondo y Partículas) */
         #webgl-container {
-            position: fixed;
+            position: absolute;
             top: 0;
             left: 0;
             width: 100vw;
             height: 100vh;
-            z-index: -3;
+            z-index: 1;
         }
 
-        .bg-model-container {
-            position: fixed;
-            top: 0;
-            right: 0;
-            width: 60%; 
-            height: 100vh;
-            z-index: -2;
-            background-image: url('imagenes/plaza.jpg'); 
-            background-size: cover;
-            background-repeat: no-repeat;
-            background-position: center right;
-            transition: background-image 1.2s ease-in-out;
-            opacity: 0.70;
-        }
-        .gradient-overlay {
-            position: fixed;
+        /* Capa superior interactiva para la interfaz de usuario */
+        .ui-container {
+            position: absolute;
             top: 0;
             left: 0;
-            width: 100%;
+            width: 100vw;
             height: 100vh;
-            background: linear-gradient(90deg, #1a1512 0%, #1a1512 38%, rgba(26, 21, 18, 0.88) 55%, rgba(26, 21, 18, 0.15) 100%);
-            z-index: -1;
-        }
-        
-        /* CABECERA Y NAVEGACIÓN */
-        .header-navigation {
-            width: 100%;
-            display: grid;
-            grid-template-columns: auto 1fr;
-            align-items: center;
-            padding: 20px 40px;
             z-index: 10;
-            background: rgba(26, 21, 18, 0.88);
-            backdrop-filter: blur(16px);
-            position: sticky;
-            top: 0;
-            border-bottom: 1px solid rgba(246, 239, 233, 0.08);
-            gap: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            pointer-events: none; /* Permite interactuar con el modelo 3D de fondo */
         }
-        
-        /* CONTENEDOR LOGO + MARCA */
-        .brand-container {
+
+        .interactive { 
+            pointer-events: auto; 
+        }
+
+        /* === CABECERA (TOP LOGO Y MENÚ) === */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 30px 60px;
+        }
+
+        .logo-box {
             display: flex;
             align-items: center;
             gap: 12px;
-            white-space: nowrap;
         }
-        .brand-logo-img {
-            height: 68px;
-            width: auto;
-            object-fit: contain;
-        }
-        .brand-logo {
-            font-weight: 800;
-            font-size: 1.35rem;
-            letter-spacing: 2.5px;
-            text-transform: uppercase;
-            color: #ffffff;
-        }
-        .brand-logo span { color: #ffffff; font-weight: 500; } 
-        
-        /* BOTONES DE NAVEGACIÓN - BLANCO Y PLATEADO */
-        .menu-links { 
-            display: flex; 
-            list-style: none; 
-            gap: 10px; 
-            justify-content: flex-end; 
-            align-items: center;
-            flex-wrap: wrap;
-            padding-right: 10px;
-        }
-        .menu-links a {
-            color: #d1cbc4; /* Tono plateado suave para enlaces inactivos */
-            text-decoration: none;
-            font-size: 0.85rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.8px;
-            padding: 12px 24px;
-            border-radius: 30px;
-            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
-            white-space: nowrap;
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        /* Al pasar el cursor o estar activo: Blanco puro con fondo ahumado suave */
-        .menu-links li.active a, .menu-links a:hover {
-            color: #1a1512;
-            background: #ffffff; 
-            border-color: #ffffff;
-            box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
-        }
-        
-        /* SECCIÓN PRINCIPAL */
-        .page-section {
+
+        .logo-icon {
+            width: 65px;
+            height: 65px;
+            border: 1px solid #7c5234;
+            border-radius: 4px;
             display: flex;
-            flex-direction: column;
-            padding: 60px;
-            z-index: 2;
-            width: 100%;
+            align-items: center;
+            justify-content: center;
+            background: rgba(20, 12, 7, 0.6);
+            object-fit: cover; /* Asegura que la imagen se adapte bien al recuadro */
         }
-        .meta-tag {
-            font-size: 0.78rem;
+
+        .logo-text span {
+            display: block;
+            font-size: 0.65rem;
+            letter-spacing: 3px;
+            color: #a48265;
             text-transform: uppercase;
-            letter-spacing: 6px;
-            color: #d98841;
-            font-weight: 800;
-            margin-bottom: 16px;
         }
-        h1 {
-            font-size: 3.2rem;
-            font-weight: 900;
-            line-height: 1.12;
+
+        .logo-text h2 {
+            font-family: 'Cinzel', serif;
+            font-size: 1.3rem;
+            color: #ebdcb9;
+            letter-spacing: 1.5px;
             text-transform: uppercase;
-            letter-spacing: -1px;
-            margin-bottom: 22px;
-            background: linear-gradient(90deg, #ffffff 0%, #ffdfa9 50%, #d98841 100%);
+        }
+
+        /* Menú de Navegación Superior */
+        .top-navbar {
+            display: flex;
+            gap: 12px;
+        }
+
+        .top-navbar a {
+            text-decoration: none;
+            color: #bfa38a;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 10px 24px;
+            border: 1px solid rgba(124, 82, 52, 0.4);
+            border-radius: 6px;
+            background: rgba(26, 15, 9, 0.4);
+            transition: all 0.3s ease-in-out;
+        }
+
+        .top-navbar a.active, .top-navbar a:hover {
+            background: linear-gradient(180deg, #d99c68 0%, #76411d 100%);
+            color: #ffffff;
+            border-color: #ffca9d;
+            box-shadow: 0 0 15px rgba(217, 156, 104, 0.35);
+            font-weight: 600;
+        }
+
+        /* === CONTENIDO CENTRAL === */
+        .main-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+           padding: 10px 80px 0 80px;
+            flex-grow: 1;
+        }
+
+        /* Bloque Izquierdo */
+        .hero-section {
+            max-width: 600px;
+        }
+
+        .hero-section h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 3.3rem;
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 20px;
+            background: linear-gradient(to bottom, #ffffff 0%, #d9b48f 45%, #8c5836 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            filter: drop-shadow(3px 3px 2px #3c2111) drop-shadow(5px 10px 15px rgba(0,0,0,0.9));
         }
-        .action-button {
-            display: inline-block;
-            background: linear-gradient(135deg, #d98841 0%, #6e3615 100%);
-            color: #ffffff;
+
+        .hero-section .location-tag {
+            font-size: 1.1rem;
+            letter-spacing: 0px;
+            color: #bb987a;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .hero-section .author-tag {
+            font-size: 0.9rem;
+            color: #e2cdbd;
+            margin-bottom: 24px;
+        }
+
+        .action-wrapper {
+            display: flex;
+            align-items: flex-end;
+            gap: 25px;
+        }
+
+        .btn-main-enter {
+            background: linear-gradient(180deg, #62391e 0%, #2e170a 100%);
+            border: 2px solid #845737;
+            color: #a08061;
+            padding: 16px 36px;
+            font-size: 1.05rem;
             font-weight: 700;
             text-transform: uppercase;
-            font-size: 0.95rem;
-            letter-spacing: 2.5px;
-            padding: 20px 50px;
-            border-radius: 40px; 
-            box-shadow: 0 12px 36px rgba(217, 136, 65, 0.25);
-            border: none;
+            letter-spacing: 1px;
+            border-radius: 6px;
             cursor: pointer;
-            transition: all 0.4s ease;
-            text-decoration: none;
-            width: fit-content;
-            text-align: center;
-        }
-        .action-button:hover {
-            transform: translateY(-4px) scale(1.02);
-            box-shadow: 0 20px 50px rgba(217, 136, 65, 0.4);
-            background: linear-gradient(135deg, #e59858 0%, #8a451c 100%);
+            box-shadow: inset 0 0 8px rgba(0,0,0,0.6), 0 8px 25px rgba(0,0,0,0.8);
+            transition: all 0.3s;
         }
 
-        /* DISEÑO DE CONTENIDO */
-        .layout-inicio { max-width: 620px; }
-        .author-name {
-            font-size: 0.95rem; 
-            color: #caa890;
-            margin-bottom: 30px;
-            font-weight: 500; 
-            text-transform: uppercase; 
-            letter-spacing: 1.5px;
+        .btn-main-enter:hover {
+            border-color: #d9b48f;
+            background: linear-gradient(180deg, #7c4c2b 0%, #3d2010 100%);
+            transform: translateY(-2px);
         }
-        .essay-box {
-            background: rgba(60, 40, 28, 0.65);
-            border-left: 5px solid #d98841;
-            padding: 35px;
-            border-radius: 0 20px 20px 0;
-            backdrop-filter: blur(16px);
-            margin-bottom: 35px;
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.3);
-        }
-        .essay-box p { font-size: 1.08rem; line-height: 1.7; color: #f1ebd9; margin-bottom: 18px; text-align: justify; }
-        .essay-box p:last-child { margin-bottom: 0; }
 
-        /* BARRA INFERIOR DE DATOS TÉCNICOS */
-        .data-footer {
-            width: 100%;
-            background: #0a0604;
-            border-top: 1px solid rgba(217, 136, 65, 0.1);
-            padding: 30px 60px;
-            z-index: 10;
-            margin-top: auto;
+        /* Bloque Derecho */
+        .sidebar {
+            display: flex; 
+            flex-direction: column; 
+            gap: 12px; 
+            align-items: flex-end;
         }
-        .data-row {
-            max-width: 100%;
+
+        .plaque-wrapper {
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.6));
+            cursor: pointer; 
+            transition: 0.3s;
+        }
+        
+        .plaque-wrapper:hover { 
+            transform: scale(1.05); 
+            filter: drop-shadow(0 0 10px rgba(186, 147, 116, 0.4)); 
+        }
+
+        .plaque-border {
+            clip-path: polygon(15px 0, calc(100% - 15px) 0, 100% 50%, calc(100% - 15px) 100%, 15px 100%, 0 50%);
+            background: linear-gradient(180deg, #815b40 0%, #351e10 100%);
+            padding: 2px;
+            width: 260px;
+        }
+
+        .plaque-inner {
+            clip-path: polygon(14px 0, calc(100% - 14px) 0, 100% 50%, calc(100% - 14px) 100%, 14px 100%, 0 50%);
+            background: linear-gradient(180deg, #462817 0%, #1c0e07 100%);
+            padding: 12px 10px;
+            text-align: center; 
+            font-family: 'Cinzel', serif; 
+            font-size: 0.9rem; 
+            font-weight: 600;
+            color: #d8c3b0; 
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.8);
+        }
+
+        /* === PIE DE PÁGINA === */
+       /* === PIE DE PÁGINA MODIFICADO === */
+        footer {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 40px;
+            grid-template-columns: 1fr 1fr 1fr;
+            /* Degradado café oscuro a negro absoluto abajo */
+            background: linear-gradient(to bottom, #140d0a 0%, #050302 100%);
+            /* Borde superior café más delgado y sutil */
+            border-top: 1px solid rgba(132, 87, 55, 0.25);
+            box-shadow: 0 -8px 25px rgba(0,0,0,0.95);
+            /* Clip-path opcional: hace que las esquinas inferiores se metan sutilmente hacia dentro */
+            clip-path: polygon(0 0, 100% 0, 99% 100%, 1% 100%);
         }
-        .data-block { 
-            border-left: 2px solid rgba(217, 136, 65, 0.4); 
-            padding-left: 22px; 
-        }
-        .label-technical { font-size: 0.78rem; text-transform: uppercase; color: #d98841; letter-spacing: 2.5px; font-weight: 700; margin-bottom: 8px; }
-        .value-technical { font-size: 0.9rem; color: #b89c84; line-height: 1.6; }
 
-        /* RESPONSIVE */
-        @media (max-width: 1150px) {
-            .header-navigation { padding: 20px; grid-template-columns: 1fr; justify-items: center; gap: 20px; }
-            .menu-links { justify-content: center; padding-right: 0; }
+        .footer-cell {
+            text-align: center;
+            /* Reducido el padding vertical de 22px a 10px para hacerlo más delgado */
+            padding: 10px 22px;
+            font-family: 'Cinzel', serif;
+            color: #cca98f;
+            border-right: 1px solid rgba(132, 87, 55, 0.15);
         }
-        @media (max-width: 992px) {
-            .bg-model-container { opacity: 0.25; }
-            .page-section { padding: 40px 25px; }
+
+        .footer-cell:last-child {
+            border-right: none;
         }
+
+        .footer-cell h3 {
+            /* Fuente un poco más pequeña para equilibrar el diseño delgado */
+            font-size: 0.95rem;
+            letter-spacing: 1.5px;
+            margin-bottom: 3px;
+            font-weight: 700;
+            color: #d9b48f;
+        }
+
+        .footer-cell p {
+            font-family: 'Montserrat', sans-serif;
+            /* Tamaño de fuente ajustado a 0.8rem */
+            font-size: 0.8rem;
+            color: #8c7765;
+            line-height: 1.3;
+            font-weight: 400;
+        }
+        /* Quita la línea de abajo y el color azul de los enlaces */
+.sidebar.interactive a {
+    text-decoration: none;
+    color: inherit; /* Esto hace que el texto use el color original de tus placas */
+}
     </style>
 </head>
 <body>
 
     <div id="webgl-container"></div>
 
-    <div class="bg-model-container" id="globalBg"></div>
-    <div class="gradient-overlay"></div>
-
-    <header class="header-navigation">
-        <div class="brand-container">
-            <img src="imagenes/logo.png" alt="Logo Llallagua" class="brand-logo-img">
-            <div class="brand-logo">LLALLAGUA - <span>SIGLO "XX"</span></div>
-        </div>
-        <ul class="menu-links">
-            <li class="active"><a href="#inicio">Inicio</a></li>
-            <li><a href="fotografias.html">Fotografias</a></li>
-            <li><a href="estatuas.html">Monumentos</a></li>
-            <li><a href="recorrido.html">Modelo 3D</a></li>
-        </ul>
-    </header>
-
-    <main id="inicio" class="page-section">
-        <div class="layout-inicio">
-            <span class="meta-tag">PATRIMONIO HISTÓRICO</span>
-            <h1>Puesta en Valor de la Histórica Plaza del Minero</h1>
-            <div class="author-name">Desarrollado Por: Franco Fabricio Quispe</div>
-            
-            <div class="essay-box">
-                <p>Bienvenido al entorno virtual dedicado exclusivamente a la Plaza del Minero de Siglo XX (Llallagua, Potosí). Este espacio web y su recorrido interactivo nacen como un proyecto académico de rescate y preservación digital de la memoria histórica, política y sindical del proletariado boliviano, enfocándose en el suelo donde se concentraron las mayores movilizaciones obreras del país.</p>
-                <p>Estar en la histórica Plaza del Minero implica situarse en un contexto que reúne todas las peculiaridades de un verdadero patrimonio histórico que debe conservarse para la posteridad. Un monumento vivo de las luchas sociales que tuvieron lugar en este espacio abierto, donde se consolidó la larga tradición del sindicalismo revolucionario.</p>
+    <div class="ui-container">
+        
+        <header>
+            <div class="logo-box">
+                <img src="imagenes/logo.png" alt="Logo" class="logo-icon">
+                
+                <div class="logo-text">
+                    <span>Bolivia - Potosi</span>
+                    <h2>Llallagua - Siglo XX</h2>
+                </div>
             </div>
             
-            <a href="modelo.html" class="action-button">Ingresar al Entorno 3D</a>
-        </div>
-    </main>
+            <nav class="top-navbar interactive">
+                <a href="#" class="active">Inicio</a>
+                <a href="fotografias.html">Fotografías</a>
+                <a href="modelo.html">Modelo 3D</a>
+            </nav>
+            <div style="width: 150px;"></div> 
+        </header>
 
-    <footer class="data-footer">
-        <div class="data-row">
-            <div class="data-block">
-                <div class="label-technical">Denominación Oficial</div>
-                <div class="value-technical">"Monumento Histórico de Grandes Revolucionarios" (Ley Mpal. 131/2017).</div>
+        <main class="main-content">
+            <div class="hero-section">
+                <h1>Puesta en Valor de la Histórica Plaza del Minero</h1>
+                <div class="location-tag">Autor: Franco Fabricio Quispe</div>
+               <div class="author-tag">Descubre la historia y el patrimonio de la Plaza del Minero de Siglo XX.<br>Mediante un recorrido virtual interactivo en 3D. Explora sus<br>monumentos y conoce la importancia histórica y cultural de<br>este emblemático sitio de Llallagua, Potosí.</div>
+                <div class="action-wrapper">
+                    <button class="btn-main-enter interactive" onclick="window.location.href='modelo.html'">Ingresar al Entorno 3D</button>
+                </div>
             </div>
-            <div class="data-block">
-                <div class="label-technical">Ubicación Geográfica</div>
-                <div class="value-technical">Distrito de Siglo XX, Municipio de Llallagua, Potosí, Bolivia.</div>
-            </div>
-            <div class="data-block">
-                <div class="label-technical">Estatus Patrimonial</div>
-                <div class="value-technical">Epicentro del Sindicalismo Revolucionario Boliviano.</div>
-            </div>
+            <div class="sidebar interactive">
+            <a href="minero.html" class="enlace-placa">
+                <div class="plaque-wrapper"><div class="plaque-border"><div class="plaque-inner">Monumento al Minero</div></div></div>
+            </a>
+            <a href="palliri.html" class="enlace-placa">
+                <div class="plaque-wrapper"><div class="plaque-border"><div class="plaque-inner">Monumento a las Palliris</div></div></div>
+            </a>
+            <a href="federico.html" class="enlace-placa">
+                <div class="plaque-wrapper"><div class="plaque-border"><div class="plaque-inner">Monumento a Federico Escobar</div></div></div>
+            </a>
+            <a href="irineo.html" class="enlace-placa">
+                <div class="plaque-wrapper"><div class="plaque-border"><div class="plaque-inner">Monumento a Irineo Pimentel Rojas</div></div></div>
+            </a>
+            <a href="cesar.html" class="enlace-placa">
+                <div class="plaque-wrapper"><div class="plaque-border"><div class="plaque-inner">Monumento a Cesar, Guillermo e Isaac</div></div></div>
+            </a>
+            <a href="ubicacion.html" class="enlace-placa">
+                <div class="plaque-wrapper"><div class="plaque-border"><div class="plaque-inner">Ubicación del Sitio</div></div></div>
+            </a>
         </div>
-    </footer>
+        </main>
+
+        <footer class="interactive">
+            <div class="footer-cell">
+                <h3>Denominación Oficial</h3>
+                <p>"Monumento Histórico de Grandes Revolucionarios"<br>(Ley Mpal, 131/2017).</p>
+            </div>
+            <div class="footer-cell">
+                <h3>Ubicación Geográfica</h3>
+                <p>Distrito de Siglo XX, Municipio de Llallagua, Potosí,<br>Bolivia.</p>
+            </div>
+            <div class="footer-cell">
+                <h3>Estatus Patrimonial</h3>
+                <p>Epicentro del Sindicalismo Revolucionario Boliviano.</p>
+            </div>
+        </footer>
+
+    </div>
 
     <script>
-        // Lógica del carrusel de imágenes de fondo 
-        const imagenesFondo = [
-            'imagenes/minero1.png',
-            'imagenes/fondo1.jpg', 
-            'imagenes/plaza1.png'
-        ];
-        let indiceActual = 0;
-        const contenedorBg = document.getElementById('globalBg');
-        
-        function cambiarImagenFondo() {
-            indiceActual = (indiceActual + 1) % imagenesFondo.length;
-            contenedorBg.style.backgroundImage = `url('${imagenesFondo[indiceActual]}')`;
-        }
-        setInterval(cambiarImagenFondo, 4000);
+        var scene;
+        var camera;
+        var renderer;
+        var plaza; 
+        var controles;
+        var mineralParticles;
 
-        // --- ESCENARIO DE PARTÍCULAS MINERALES (Three.js) ---
         const container = document.getElementById('webgl-container');
 
-        // 1. Escena, Cámara y Renderizador
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        // 1. Inicialización de Escena y Renderizador
+        scene = new THREE.Scene();
         
-        camera.position.z = 3.5; 
-
-        const renderer = new THREE.WebGLRenderer({ alpha: true });
+        renderer = new THREE.WebGLRenderer({ antialias: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        renderer.toneMappingExposure = 1.3; 
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        
+        if (renderer.outputColorSpace) {
+            renderer.outputColorSpace = THREE.SRGBColorSpace;
+        } else if (renderer.outputEncoding) {
+            renderer.outputEncoding = THREE.sRGBEncoding;
+        }
         container.appendChild(renderer.domElement);
 
-        // 2. Creación de Partículas 
-        const particlesCount = 800;
-        const geometry = new THREE.BufferGeometry();
-        const positions = new Float32Array(particlesCount * 3);
-        const colors = new Float32Array(particlesCount * 3);
+        // --- CIELO ---
+        const canvasFondo = document.createElement('canvas');
+        canvasFondo.width = 1;
+        canvasFondo.height = 256;
+        const ctx = canvasFondo.getContext('2d');
+        const degradado = ctx.createLinearGradient(0, 0, 0, 256);
+        
+        degradado.addColorStop(0, '#0d0f12');   
+        degradado.addColorStop(0.6, '#1e252b');  
+        degradado.addColorStop(1, '#4a2f13');    
+        ctx.fillStyle = degradado;
+        ctx.fillRect(0, 0, 1, 256);
+        
+        const texturaCielo = new THREE.CanvasTexture(canvasFondo);
+        if (texturaCielo.colorSpace) {
+            texturaCielo.colorSpace = THREE.SRGBColorSpace;
+        } else if (texturaCielo.encoding) {
+            texturaCielo.encoding = THREE.sRGBEncoding;
+        }
+        scene.background = texturaCielo;
 
-        const paletaColores = [
-            new THREE.Color(0xd98841), 
-            new THREE.Color(0xfadbd8), 
-            new THREE.Color(0xa0522d), 
-            new THREE.Color(0xcd853f), 
-            new THREE.Color(0xffe4c4), 
-            new THREE.Color(0x5c4033)  
-        ];
+        // 2. Configuración de Cámara
+        camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.set(0, 2, 9);
+
+        // --- CONTROLES INTERACTIVOS ---
+        controles = new THREE.OrbitControls(camera, renderer.domElement);
+        controles.enableDamping = true;
+        controles.dampingFactor = 0.05;
+        controles.enableZoom = true;
+        controles.minDistance = 3;
+        controles.maxDistance = 20;
+        controles.maxPolarAngle = Math.PI / 2; 
+
+        // 3. Sistema de Iluminación
+        const ambientLight = new THREE.AmbientLight(0x3a3530, 0.8);
+        scene.add(ambientLight);
+
+        const hemisphereLight = new THREE.HemisphereLight(0xffffff, 0x1a110a, 0.6);
+        scene.add(hemisphereLight);
+
+        const directionalLight = new THREE.DirectionalLight(0xffeebb, 2.0); 
+        directionalLight.position.set(10, 25, 20);
+        directionalLight.castShadow = true;
+        directionalLight.shadow.mapSize.width = 2048; 
+        directionalLight.shadow.mapSize.height = 2048;
+        scene.add(directionalLight);
+
+        const directionalLight2 = new THREE.DirectionalLight(0x567085, 1.2); 
+        directionalLight2.position.set(-15, 15, -10);
+        scene.add(directionalLight2);
+
+        const spotLight = new THREE.SpotLight(0xffd180, 2.0);
+        spotLight.position.set(0, 35, 10);
+        spotLight.angle = Math.PI / 4;
+        spotLight.penumbra = 0.5;
+        spotLight.castShadow = true;
+        scene.add(spotLight);
+
+        // 4. Sistema de Partículas Minerales
+        const particlesCount = 250;
+        const particleGeometry = new THREE.BufferGeometry();
+        const positions = new Float32Array(particlesCount * 3);
 
         for (let i = 0; i < particlesCount * 3; i += 3) {
-            positions[i] = (Math.random() - 0.5) * 26;     
-            positions[i + 1] = (Math.random() - 0.5) * 22; 
-            positions[i + 2] = (Math.random() - 0.5) * 16; 
-
-            const colorAleatorio = paletaColores[Math.floor(Math.random() * paletaColores.length)];
-            colors[i] = colorAleatorio.r;
-            colors[i + 1] = colorAleatorio.g;
-            colors[i + 2] = colorAleatorio.b;
+            positions[i] = (Math.random() - 0.5) * 15;      
+            positions[i + 1] = (Math.random() - 0.5) * 10;   
+            positions[i + 2] = (Math.random() - 0.5) * 10;   
         }
+        particleGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
 
-        geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-        geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-
-        const material = new THREE.PointsMaterial({
-            size: 0.09,            
-            vertexColors: true,    
+        const particleMaterial = new THREE.PointsMaterial({
+            size: 0.04,
+            color: 0xffaa33, 
             transparent: true,
-            opacity: 0.72,
+            opacity: 0.85,
             blending: THREE.AdditiveBlending
         });
 
-        const particleSystem = new THREE.Points(geometry, material);
-        scene.add(particleSystem);
+        mineralParticles = new THREE.Points(particleGeometry, particleMaterial);
+        scene.add(mineralParticles);
 
+        // 5. Carga de Modelo GLTF
+        const loader = new THREE.GLTFLoader();
+
+        loader.load('assets/completomina.glb', (gltf) => {
+            plaza = gltf.scene;
+            plaza.scale.set(2.05, 2.05, 2.05);
+            plaza.position.set(2, 0.8, 0); 
+            plaza.rotation.y = THREE.MathUtils.degToRad(-43); 
+            
+            plaza.traverse(function(obj) {
+                if(obj.isMesh) {
+                    obj.castShadow = true;
+                    obj.receiveShadow = true;
+                    if(obj.material) {
+                        obj.material.needsUpdate = true;
+                        obj.material.roughness = 0.4;
+                    }
+                }
+            });
+            
+            scene.add(plaza);
+            
+            var box = new THREE.Box3().setFromObject(plaza);
+            var center = box.getCenter(new THREE.Vector3());
+            controles.target.set(center.x - 0.9, center.y -0.25, center.z);
+            controles.update();
+
+        }, undefined, (error) => {
+            console.warn("Error al cargar el modelo:", error);
+        });
+
+        // 6. Ciclo de Animación
         const clock = new THREE.Clock();
 
-        const tick = () => {
+        function renderLoop() {
+            requestAnimationFrame(renderLoop);
             const elapsedTime = clock.getElapsedTime();
 
-            particleSystem.rotation.y = elapsedTime * 0.018;
-            particleSystem.rotation.x = elapsedTime * 0.010;
-
-            const positionsArray = geometry.attributes.position.array;
-            for (let i = 1; i < positionsArray.length; i += 3) {
-                positionsArray[i] = positionsArray[i] + Math.sin(elapsedTime + i) * 0.0018;
+            if (mineralParticles) {
+                mineralParticles.rotation.y = elapsedTime * 0.015;
+                mineralParticles.rotation.x = elapsedTime * 0.008;
             }
-            geometry.attributes.position.needsUpdate = true;
 
+            controles.update();
             renderer.render(scene, camera);
-            window.requestAnimationFrame(tick);
-        };
+        }
+        renderLoop();
 
-        tick();
-
+        // 7. Redimensionar Ventana
         window.addEventListener('resize', () => {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();

@@ -205,3 +205,28 @@ body {
     .texto-monumento span { font-size: 2rem; }
     #info-sidebar { width: 100%; max-width: 100%; height: auto; bottom: 0; top: auto; background: linear-gradient(0deg, #1a1512 80%, rgba(26, 21, 18, 0.95) 100%); padding: 30px; }
 }
+.foto-contexto-container {
+    margin-top: 40px; 
+    max-width: 450px;
+    pointer-events: auto; 
+}
+.foto-contexto {
+    width: 100%;
+    max-height: 60vh;
+    object-fit: cover; 
+    object-position: top; 
+    border-radius: 6px;
+    border: 2px solid rgba(217, 156, 104, 0.4);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.8);
+    transition: transform 0.3s ease, border-color 0.3s ease;
+}
+.foto-contexto:hover {
+    transform: scale(1.02);
+    border-color: rgba(217, 156, 104, 0.8);
+}
+.foto-contexto-container {
+    margin-top: 3px; 
+    margin-left: 30px;
+    max-width: 350px; 
+    pointer-events: auto; 
+}
