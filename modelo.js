@@ -106,7 +106,7 @@ textureLoader.load(
     }, 6000);
     
     // 1. Cargar el modelo principal de la plaza
-    cargar.load("assets/plaza1.glb", function(gltf) {
+    cargar.load("assets/piso.glb", function(gltf) {
         plaza = gltf.scene;
         plaza.position.set(0, 0, 0);
         plaza.scale.set(5, 5, 5);
@@ -142,7 +142,7 @@ textureLoader.load(
         }
     },
     function(error) {
-        console.log("Error cargando plaza1.glb:", error);
+        console.log("Error cargando piso.glb:", error);
         verificarCargaCompleta(); // Cuenta igual para evitar que se quede congelado
     });
 
