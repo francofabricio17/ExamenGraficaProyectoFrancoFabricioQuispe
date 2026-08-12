@@ -58,14 +58,14 @@ function init() {
     scene.add(directionalLight2);
 
     const textureLoader = new THREE.TextureLoader();
-textureLoader.load(
-    "imagenes/cielo.jpg",
-    function (texture) {
-        texture.colorSpace = THREE.SRGBColorSpace;
-        texture.mapping = THREE.EquirectangularReflectionMapping;
-        scene.background = texture;
-        scene.environment = texture;
-    }
+    textureLoader.load(
+        "imagenes/cielo.jpg",
+        function (texture) {
+            texture.colorSpace = THREE.SRGBColorSpace;
+            texture.mapping = THREE.EquirectangularReflectionMapping;
+            scene.background = texture;
+            scene.environment = texture;
+        }
     );
     
     var loaderContainer = document.getElementById('loader-container');
@@ -96,8 +96,6 @@ textureLoader.load(
         }
     }
 
-    // SEGURIDAD DE EMERGENCIA: Si por algún motivo un modelo falla o se traba, 
-    // a los 6 segundos la pantalla de carga se quita a la fuerza para que puedas ver tu escena.
     setTimeout(function() {
         if (!pantallaOculta) {
             console.warn("Aviso de emergencia: Forzando la retirada del loader por tiempo límite.");
@@ -105,7 +103,7 @@ textureLoader.load(
         }
     }, 6000);
     
-    // 1. Cargar el modelo principal de la plaza
+    // 1. Cargar el modelo principal (piso.glb corregido)
     cargar.load("assets/piso.glb", function(gltf) {
         plaza = gltf.scene;
         plaza.position.set(0, 0, 0);
@@ -143,17 +141,16 @@ textureLoader.load(
     },
     function(error) {
         console.log("Error cargando piso.glb:", error);
-        verificarCargaCompleta(); // Cuenta igual para evitar que se quede congelado
+        verificarCargaCompleta();
     });
 
-    // Función auxiliar para cargas secundarias con control de errores
     function cargarModeloSeguro(url, callbackError) {
         cargar.load(url, function(gltf) {
             callbackError(gltf.scene);
             verificarCargaCompleta();
         }, undefined, function(error) {
             console.log("Error en modelo: " + url, error);
-            verificarCargaCompleta(); // Evita que se congele si un archivo falla
+            verificarCargaCompleta();
         });
     }
 
